@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:resource name="" path="" id="6904d0ec-90f8-4ea2-8cc4-8659d8c01b1f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="6904d0ec-90f8-4ea2-8cc4-8659d8c01b1ffileName"/></con:settings><con:parameters/><con:method name="Method 2" id="da222a83-08f5-4cbb-91b4-8fe4d2999d8c" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="e86f59d3-3810-4775-9d45-47d8f65011a7" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8081/my-virt</con:endpoint><con:request>{\r
+   "RoutingRequest" : {\r
+      "USDRouting" : {\r
+         "DCExemption" : "No",\r
+         "BeneficiaryBank" : "AB",\r
+         "PaymentTo" : "WBC",\r
+         "BeneficiaryAccountInternational" : "Yes"\r
+      }\r
+   }\r
+}</con:request><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource>

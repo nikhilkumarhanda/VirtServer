@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:restMockAction name="" method="POST" resourcePath="/" id="120eabf3-0f30-4d2a-9f86-28a6f4648a28" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="120eabf3-0f30-4d2a-9f86-28a6f4648a28fileName"/></con:settings><con:defaultResponse>Response 6</con:defaultResponse><con:dispatchStyle>SCRIPT</con:dispatchStyle><con:dispatchConfig xsi:type="con:MockOperationQueryMatchDispatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:query><con:name>DC Exemption</con:name><con:type>JSONPath</con:type><con:query>$['RoutingRequest']['USDRouting']['DCExemption']</con:query><con:match>'Yes'</con:match><con:response>Response 1</con:response></con:query><con:query><con:name>NZ</con:name><con:type>JSONPath</con:type><con:query>$['RoutingRequest']['USDRouting']['BeneficiaryBank ']</con:query><con:match>NZ</con:match><con:response>Response 2</con:response></con:query><con:query><con:name>BenBank</con:name><con:type>JSONPath</con:type><con:query>$['RoutingRequest']['USDRouting']['BeneficiaryAccountInternational ']</con:query><con:match>Yes</con:match><con:response>Response 3</con:response></con:query><con:query><con:name>US</con:name><con:type>JSONPath</con:type><con:query>$['RoutingRequest']['USDRouting']['PaymentTo ']</con:query><con:match>US</con:match><con:response>Response 4</con:response></con:query><con:query><con:name>OtherCountry</con:name><con:type>JSONPath</con:type><con:query>$['RoutingRequest']['USDRouting']['PaymentTo ']</con:query><con:match>AS, BN, CN, GU, HK,ID, KH, KI, KR, LA, MO, MY, NC, NR, NU, PF, PH, PW, SG, TH, TL, TV, TW, TN, JP</con:match><con:response>Response 5</con:response></con:query></con:dispatchConfig><con:dispatchPath>import groovy.json.JsonSlurper
+import org.codehaus.groovy.runtime.*
+import groovy.xml.*
+
+def slurper = new JsonSlurper()
+def json_request = slurper.parseText(mockRequest.getRequestContent()).RoutingRequest.USDRouting
+
+def Other_Country =  [ 'AS', 'BN', 'CN', 'GU', 'HK','ID', 'KH', 'KI', 'KR', 'LA', 'MO', 'MY', 'NC', 'NR', 'NU', 'PF', 'PH', 'PW', 'SG', 'TH', 'TL', 'TV', 'TW', 'TN', 'JP']
+def BeneficiaryBank = json_request.BeneficiaryBank
+
+requestContext.DCCover  = json_request.DCExemption;
+
+if (json_request.DCExemption == 'Yes')
+{
+     requestContext.BeneficiaryBank = json_request.BeneficiaryBank;
+	return "Response 1"
+}
+else if (json_request.BeneficiaryBank == 'NZ')
+{
+     requestContext.BeneficiaryBank = json_request.BeneficiaryBank;
+	return "Response 2"
+}
+else if (json_request.BeneficiaryAccountInternational == 'Yes')
+{
+     requestContext.BeneficiaryBank = "Send to Beneficiary Bank even if in another country"
+	return "Response 3"
+}
+else if (json_request.PaymentTo == 'US')
+{
+     requestContext.BeneficiaryBank = "Bank of New York, Mellon"
+	return "Response 4"
+}
+else if (Other_Country.contains(json_request.BeneficiaryBank))
+{
+    requestContext.BeneficiaryBank = "Wells Fargo"
+	return "Response 5"
+}
+else if (json_request.PaymentTo == 'WBC' || json_request.PaymentTo == 'SGB Australia')
+{
+     requestContext.BeneficiaryBank = "WBC or SGB Autralia"
+	return "Response 6"
+}
+else
+{
+     requestContext.BeneficiaryBank = "Citibank"
+	return "Response 7"
+}</con:dispatchPath><con:dispatchXPath/><con:parameterDispatcherRuleContainer/><con:routeScript/><con:response name="Response 1" id="aea4b426-99d5-4456-a715-852a4cf1d0e9" httpResponseStatus="200" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070" mediaType="application/json" dataSource=""><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Response 2" id="57ab2261-450e-4e72-bbbc-a22b9c10888d" httpResponseStatus="400" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070" mediaType="application/json" dataSource=""><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Response 3" id="05c56af0-1451-44da-a3da-f77562a65dd5" httpResponseStatus="200" dataSource="" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070" mediaType="application/json"><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Response 4" id="68fab3fe-1e58-4289-a317-d6ae82a9fe97" httpResponseStatus="200" dataSource="" mediaType="application/json" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070"><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Response 5" id="5dd97b66-9728-4adb-b4ce-bf05ec8b64d8" httpResponseStatus="200" dataSource="" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070" mediaType="application/json"><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Response 6" id="41e739e8-ffdf-4e70-b067-e8747bf6855f" httpResponseStatus="200" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070" mediaType="application/json" dataSource=""><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Response 7" id="8a25ca92-5921-4f4d-8cd6-6ff7ab2c10de" httpResponseStatus="200" mediaType="application/json" compressedBodyContent="aced00057372002f636f6d2e657669776172652e736f617075692e696d706c2e737570706f72742e436f6d7072657373656456616c7565000b8b02c748eeab0200025a000a636f6d707265737365645b0004646174617400025b4278700070" dataSource=""><con:settings/><con:responseContent>{
+"RoutingResponse": {
+"ReceiverBank": {
+"Name": "${BeneficiaryBank}",
+"DCCover": "${DCCover}"
+}
+}
+}</con:responseContent></con:response><con:response name="Error Response" id="c86d4b41-5177-47ce-8076-eee6677e87a7" httpResponseStatus="500" mediaType="application/json" dataSource=""><con:settings/><con:responseContent/></con:response></con:restMockAction>
